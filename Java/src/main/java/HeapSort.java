@@ -1,6 +1,10 @@
 package main.java;
 
 public class HeapSort {
+    /**
+     * Use it to sort arrays of integers
+     * @param arr - array with integers to sort
+     */
     public static void sort(int[] arr) {
         if (arr == null) {
             return;
@@ -15,6 +19,11 @@ public class HeapSort {
     }
 
 
+    /**
+     * @param array - array of integers
+     * @param len - length of array
+     * @param i - default to 0
+     */
     private static void heapify(int[] array, int len, int i) {
         int max = i;
         int l = 2 * i + 1;
@@ -31,6 +40,12 @@ public class HeapSort {
             heapify(array, len, max);
         }
     }
+
+    /**
+     * @param arr - array of integers
+     * @param ind1 - index of first integer
+     * @param ind2 - index of second integer
+     */
     private static void swap_int(int[] arr, int ind1, int ind2) {
         int temp = arr[ind1];
         arr[ind1] = arr[ind2];
