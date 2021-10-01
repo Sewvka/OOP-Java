@@ -1,4 +1,4 @@
-package main.java;
+package Task1;
 
 public class HeapSort {
     /**
@@ -13,13 +13,14 @@ public class HeapSort {
         for (int i = len / 2 - 1; i >= 0; i--)
             heapify(arr, len, i);
         for (int i = len - 1; i > 0; i--) {
-            swap_int(arr, 0, i);
+            swapInt(arr, 0, i);
             heapify(arr, i, 0);
         }
     }
 
 
     /**
+     * heapify items in array
      * @param array - array of integers
      * @param len - length of array
      * @param i - default to 0
@@ -36,17 +37,18 @@ public class HeapSort {
             max = r;
 
         if (max != i) {
-            swap_int(array, i, max);
+            swapInt(array,  i, max);
             heapify(array, len, max);
         }
     }
 
     /**
+     * swap two items in array
      * @param arr - array of integers
      * @param ind1 - index of first integer
      * @param ind2 - index of second integer
      */
-    private static void swap_int(int[] arr, int ind1, int ind2) {
+    private static void swapInt(int[] arr, int ind1, int ind2) {
         int temp = arr[ind1];
         arr[ind1] = arr[ind2];
         arr[ind2] = temp;
