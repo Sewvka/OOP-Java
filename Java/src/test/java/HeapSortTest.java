@@ -35,7 +35,7 @@ class HeapSortTest {
 
     @Test
     @DisplayName("Put Null instead of array")
-    public void testHeapSort7() {
+    public void emptyArrayTest() {
         int[] array = null;
         assertThrows(IllegalArgumentException.class, ()->HeapSort.sort(array));
     }
