@@ -7,7 +7,7 @@ public class HeapSort {
      */
     public static void sort(int[] arr) {
         if (arr == null) {
-            return;
+            throw new IllegalArgumentException("Array can not be null");
         }
         int len = arr.length;
         for (int i = len / 2 - 1; i >= 0; i--)
