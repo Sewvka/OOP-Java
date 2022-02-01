@@ -9,7 +9,7 @@ import java.util.Iterator;
  *
  * @param <E> - type of element that will be stored within stack.
  */
-public class Stack<E> implements Iterable<E> {
+public class Stack<E> /**implements Iterable<E>*/ {
     private Object[] stackArr;
     private int stackSize;
 
@@ -118,24 +118,21 @@ public class Stack<E> implements Iterable<E> {
         return stackSize;
     }
 
-    //@Override
-    public Iterator<E> iterator() {
+    public /**Iterator<E>*/StackIterator iterator() {
         return new StackIterator();
     }
 
-    public class StackIterator implements Iterator<E> {
+    public class StackIterator /**implements Iterator<E>*/ {
         int current;
 
         public StackIterator() {
             current = 0;
         }
 
-        //@Override
         public boolean hasNext() {
             return (current < stackArr.length - 1);
         }
 
-        //@Override
         public E next() {
             E data = (E) stackArr[current];
             current++;
