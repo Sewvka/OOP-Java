@@ -118,27 +118,27 @@ public class Stack<E> /**implements Iterable<E>*/ {
         return stackSize;
     }
 
-    public StackIterator iterator() {
-        return new StackIterator();
-    }
+//    public StackIterator iterator() {
+//        return new StackIterator();
+//    }
 
 
 //   Pub or private
-    private class StackIterator /**implements Iterator<E>*/ {
-        int current;
-
-        private StackIterator() {
-            current = 0;
-        }
-
-        public boolean hasNext() {
-            return (current < stackArr.length - 1);
-        }
-
-        public E next() {
-            E data = (E) stackArr[current];
-            current++;
-            return data;
-        }
-    }
+//    private class StackIterator /**implements Iterator<E>*/ {
+//        int current;
+//
+//        private StackIterator() {
+//            current = 0;
+//        }
+//
+//        public boolean hasNext() {
+//            return (current < stackArr.length - 1);
+//        }
+//
+//        public E next() {
+//            E data = (E) stackArr[current];
+//            current++;
+//            return data;
+//        }
+//    }
 }
