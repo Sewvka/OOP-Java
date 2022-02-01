@@ -1,7 +1,7 @@
 package GradeBook;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Contains a student's grades.
@@ -35,20 +35,22 @@ public class Gradebook {
      *
      * @return - returns the average grade as float value.
      */
+
     public float averageGrade() {
-        float avg = 0;
-        int gradecount = 0;
+//        float avg = 0;
+//        int gradecount = 0;
 
-        for (int i = 0; i < 8; i++) {
-            for (Map.Entry<String, Integer> entry : grades[i].entrySet()) {
-                avg += entry.getValue();
-                gradecount++;
-            }
-        }
+//        for (int i = 0; i < 8; i++) {
+//            for (Map.Entry<String, Integer> entry : grades[i].entrySet()) {
+//                avg += entry.getValue();
+//                gradecount++;
+//            }
+//        }
 
-        avg /= gradecount;
-
-        return avg;
+        List<Collection<Integer>> marks = new ArrayList<>();
+        IntStream.range(0, 8).forEach( idx -> marks.add(grades[idx].values()));
+        List<Integer> floatMarks = marks.stream().collect(ArrayList::new, List::addAll, List::addAll);
+        return (float) floatMarks.stream().mapToDouble(d -> d).average().orElse(0.0);
     }
 
     /**
@@ -60,13 +62,13 @@ public class Gradebook {
     public boolean increasedStipend(int sem) {
         if (sem > 8 || sem < 1) throw new IllegalArgumentException("Semester value has to be between 1 and 8!");
 
-        for (Map.Entry<String, Integer> entry : grades[sem - 1].entrySet()) {
-            if (entry.getValue() != 5) {
-                return false;
-            }
-        }
+//        for (Map.Entry<String, Integer> entry : grades[sem - 1].entrySet()) {
+//            if (entry.getValue() != 5) {
+//                return false;
+//            }
+//        }
 
-        return true;
+        return grades[sem-1].values().stream().allMatch(mark -> mark.equals(5));
     }
 
     /**
@@ -79,25 +81,33 @@ public class Gradebook {
      */
     public boolean redDiploma() {
         Map<String, Integer> diploma = new HashMap<String, Integer>();
-        int gradecount = 0;
+//        int gradecount = 0;
 
-        for (int i = 0; i < 8; i++) {
-            for (Map.Entry<String, Integer> entry : grades[i].entrySet()) {
-                if (entry.getValue() == 3) {
-                    return false;
-                }
+//        for (int i = 0; i < 8; i++) {
+//            for (Map.Entry<String, Integer> entry : grades[i].entrySet()) {
+//                if (entry.getValue() == 3) {
+//                    return false;
+//                }
+//
+//                if (entry.getValue() == 5) {
+//                    diploma.putIfAbsent(entry.getKey(), entry.getValue());
+//                }
+//
+//                gradecount++;
+//            }
+//        }
+        List<Integer> marks = new ArrayList<>();
+        IntStream.range(0, 8).forEach(idx -> {
+            grades[idx].entrySet().forEach(entry -> {
+                if (entry.getValue() == 5) diploma.putIfAbsent(entry.getKey(), entry.getValue()); marks.add(entry.getValue());
+            });
+        });
+        if (marks.stream().anyMatch(mark -> mark == 3)) return false;
 
-                if (entry.getValue() == 5) {
-                    diploma.putIfAbsent(entry.getKey(), entry.getValue());
-                }
+        float ratioOf5 = (float) diploma.size() / marks.size();
 
-                gradecount++;
-            }
-        }
+        return ratioOf5 >= 0.75;
 
-        float ratioOf5 = (float) diploma.size() / gradecount;
 
-        if (ratioOf5 >= 0.75) return true;
-        else return false;
     }
 }
