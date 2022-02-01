@@ -36,7 +36,7 @@ class StackTest {
         testedStack.push(arg);
         int res = testedStack.pop();
 //      New StackIterator
-//        Stack.Stack.StackIterator
+//        Stack.StackIterator iterat = new Stack.StackIterator();
 
         assertEquals(arg, res);
     }
