@@ -123,6 +123,8 @@ public class Stack<E> implements Iterable<E> {
         return new StackIterator();
     }
 
+
+//   Pub or private
     public class StackIterator implements Iterator<E> {
         int current;
 
