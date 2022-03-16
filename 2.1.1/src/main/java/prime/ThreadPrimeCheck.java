@@ -1,4 +1,4 @@
-package Prime;
+package prime;
 
 import java.util.Arrays;
 
@@ -42,6 +42,10 @@ public class ThreadPrimeCheck {
         hasNotPrime = true;
     }
 
+    public static boolean checkRes() {
+        return hasNotPrime;
+    }
+
 }
 
 class PrimeRun implements Runnable {
@@ -55,7 +59,7 @@ class PrimeRun implements Runnable {
 
     public void run() {
         for (long l : array) {
-            if (l % ThreadPrimeCheck.THREADS == ID && PrimeValidation.isNotPrime(l)) {
+            if (!ThreadPrimeCheck.checkRes() && l % ThreadPrimeCheck.THREADS == ID && PrimeValidation.isNotPrime(l)) {
                 ThreadPrimeCheck.setHasNotPrime();
                 break;
             }
