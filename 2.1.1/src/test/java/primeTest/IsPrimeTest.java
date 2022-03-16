@@ -1,8 +1,8 @@
-package PrimeTest;
+package primeTest;
 
-import Prime.IsPrime;
-import Prime.StreamPrimeCheck;
-import Prime.ThreadPrimeCheck;
+import prime.IsPrime;
+import prime.StreamPrimeCheck;
+import prime.ThreadPrimeCheck;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,7 +87,7 @@ class IsPrimeTest {
     }
 
     @Test
-    public void threadTest10 () throws Exception {
+    public void avgthreadTest10 () throws Exception {
         assertFalse(ThreadPrimeCheck.threadRun(primesUpTo1000, 10));
         int count = 10;
         long totalTime = 0;
