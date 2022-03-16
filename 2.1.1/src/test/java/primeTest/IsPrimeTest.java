@@ -38,39 +38,48 @@ class IsPrimeTest {
     public void simpleTest() {
         arrayIncreasing();
 
+        var start = System.currentTimeMillis();
         assertFalse(IsPrime.check(enlargedTestArray));
+        var end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
     @Test
     public void threadTest2() throws Exception {
         arrayIncreasing();
-
+        var start = System.currentTimeMillis();
         assertFalse(ThreadPrimeCheck.threadRun(enlargedTestArray, 2));
-
+        var end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
     @Test
     public void threadTest4() throws Exception {
         arrayIncreasing();
-
+        var start = System.currentTimeMillis();
         assertFalse(ThreadPrimeCheck.threadRun(enlargedTestArray, 4));
-
+        var end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
     @Test
     public void threadTest8() throws Exception {
         arrayIncreasing();
 
+        var start = System.currentTimeMillis();
         assertFalse(ThreadPrimeCheck.threadRun(enlargedTestArray, 8));
-
+        var end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
     @Test
     public void threadTest16() throws Exception {
         arrayIncreasing();
 
+        var start = System.currentTimeMillis();
         assertFalse(ThreadPrimeCheck.threadRun(enlargedTestArray, 16));
-
+        var end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
 
@@ -82,8 +91,10 @@ class IsPrimeTest {
         for (final Long value : enlargedTestArray) {
             testArrayLong[index++] = value;
         }
-
+        long start = System.currentTimeMillis();
         assertFalse(StreamPrimeCheck.streamRun(testArrayLong));
+        long end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 
     @Test
@@ -97,7 +108,7 @@ class IsPrimeTest {
             long end = System.currentTimeMillis();
             totalTime += end-start;
         }
-        long avgTime = totalTime/count;
-        System.out.println("avg time Thread test 10: " + avgTime + " ms");
+        float avgTime = (float) totalTime/count;
+        System.out.println("avg time Thread test 10: " + avgTime + " ms" + "\nTotal time:" + totalTime );
     }
 }
