@@ -7,7 +7,7 @@ import static ru.nsu.fit.oop.State.*;
 
 
 public class Courier extends Employee implements Client<List<Order>> {
-    private static final long MAX_DELIVERY_TIME = 1000;
+    private static final int MAX_DELIVERY_TIME = 1000;
     private final int bagCapacity;
     private List<Order> orders;
     private final MyBlockingDequeue<Order> storage;
@@ -29,10 +29,7 @@ public class Courier extends Employee implements Client<List<Order>> {
 
     @Override
     public List<Order> consume() {
-        long deliveryTime = MAX_DELIVERY_TIME+1;
-        while (deliveryTime > MAX_DELIVERY_TIME) {
-            deliveryTime = random.nextLong();
-        }
+        int deliveryTime = random.nextInt(MAX_DELIVERY_TIME);
         try {
             orders = storage.get(bagCapacity);
             setOrdersState(DELIVERING);

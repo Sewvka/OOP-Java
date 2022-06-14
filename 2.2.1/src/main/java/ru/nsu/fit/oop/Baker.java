@@ -7,7 +7,7 @@ import static ru.nsu.fit.oop.State.IN_STOCK;
 
 
 public class Baker extends Employee implements Client<Order>, Producer<Order> {
-    private static final long MAX_COOKING_TIME = 5000;
+    private static final int MAX_COOKING_TIME = 5000;
     private final int workingExperience;
     private final Random random;
     private final MyBlockingDequeue<Order> queue;
@@ -36,11 +36,7 @@ public class Baker extends Employee implements Client<Order>, Producer<Order> {
 
     @Override
     public void produce(Order order) {
-        long leadTime = MAX_COOKING_TIME+1;
-        while (leadTime > MAX_COOKING_TIME) {
-            leadTime = random.nextLong();
-        }
-        leadTime /= workingExperience;
+        int leadTime = random.nextInt(MAX_COOKING_TIME);
         try {
             Thread.sleep(leadTime);
             order.setState(IN_STOCK);

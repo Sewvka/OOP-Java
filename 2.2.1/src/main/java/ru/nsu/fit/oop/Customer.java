@@ -4,7 +4,7 @@ import java.util.Random;
 
 
 public class Customer implements Producer<Order> {
-    private static final long MAX_ORDERING_TIME = 100;
+    private static final int MAX_ORDERING_TIME = 100;
     private final Random random;
     private final MyBlockingDequeue<Order> queue;
 
@@ -15,10 +15,7 @@ public class Customer implements Producer<Order> {
 
     @Override
     public void produce(Order order) {
-        long orderingTime = MAX_ORDERING_TIME+1;
-        while (orderingTime > MAX_ORDERING_TIME) {
-            orderingTime = random.nextLong();
-        }
+        long orderingTime = random.nextInt(MAX_ORDERING_TIME);
         try {
             Thread.sleep(orderingTime);
             order.setState(State.IN_QUEUE);
