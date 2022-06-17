@@ -1,52 +1,51 @@
 package ru.nsu.fit.oop;
 
-import java.util.List;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static ru.nsu.fit.oop.State.*;
+class Courier implements Runnable{
 
+    private final Warehouse warehouse;
+    private final Pizzeria pizzeria;
+    AtomicBoolean isFree;
+    final private int carryingTime;
+    final private int capacity;
 
-public class Courier extends Employee implements Client<List<Order>> {
-    private static final int MAX_DELIVERY_TIME = 1000;
-    private final int bagCapacity;
-    private List<Order> orders;
-    private final MyBlockingDequeue<Order> storage;
-    private final Random random;
-
-
-    public Courier(int id, int bagCapacity, MyBlockingDequeue<Order> storage) {
-        super(id);
-        this.bagCapacity = bagCapacity;
-        this.storage = storage;
-        this.random = new Random();
+    Courier(Pizzeria pizzeria, int carryingTime, int capacity) {
+        this.pizzeria = pizzeria;
+        this.warehouse = pizzeria.warehouse;
+        this.carryingTime = carryingTime;
+        this.capacity = capacity;
+        this.isFree = new AtomicBoolean(true);
     }
 
-    private void setOrdersState(State state) {
-        for (Order order : orders) {
-            order.setState(state);
-        }
+    public boolean isFree() {
+        return isFree.get();
     }
 
     @Override
-    public List<Order> consume() {
-        int deliveryTime = random.nextInt(MAX_DELIVERY_TIME);
+    public void run() {
+        ArrayList<Integer> deliveryOrders = new ArrayList<Integer>();
+        this.isFree.set(false);
         try {
-            orders = storage.get(bagCapacity);
-            setOrdersState(DELIVERING);
-            Thread.sleep(deliveryTime);
-            setOrdersState(DELIVERED);
-            return orders;
-        } catch (InterruptedException exception) {
-            System.err.println("The courier №" + getId() + " could not deliver the order.");
-            return null;
-        }
-    }
+            while (warehouse.isEmpty() && pizzeria.isOpened()){
 
-    @Override
-    void work() {
-        List<Order> orders = consume();
-        if (orders == null) {
-            stop();
+            }
+            synchronized (this) {
+                if (!warehouse.isEmpty()) {
+                    deliveryOrders.addAll(warehouse.takeOrderList(capacity));
+                }
+            }
+            Thread.sleep(carryingTime);
+            for (int ord : deliveryOrders) {
+                pizzeria.increaseDoneOrders();
+                System.out.println("[order " + ord+ "] [done]");
+            }
+            this.isFree.set(true);
+            deliveryOrders.clear();
+            pizzeria.close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

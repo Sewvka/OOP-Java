@@ -1,32 +1,17 @@
 {
-  "queueSize": 10,
-  "storageSize": 10,
-  "bakers": [
-    {
-      "id": 0,
-      "workingExperience": 2
-    },
-    {
-      "id": 1,
-      "workingExperience": 2
-    },
-    {
-      "id": 2,
-      "workingExperience": 3
-    }
+  "storageLimit": 10,
+  "ordersLimit": 5,
+  "bakersExp": [
+    3,
+    4,
+    5,
+    6
   ],
-  "couriers": [
-    {
-      "id": 0,
-      "bagCapacity": 3
-    },
-    {
-      "id": 1,
-      "bagCapacity": 2
-    },
-    {
-      "id": 2,
-      "bagCapacity": 2
-    }
-  ]
+  "couriersSpeed": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "couriersCapacity": 2
 }

@@ -1,59 +1,41 @@
 package ru.nsu.fit.oop;
 
-import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static ru.nsu.fit.oop.State.COOKING;
-import static ru.nsu.fit.oop.State.IN_STOCK;
+public class Baker implements Runnable{
+    final private Warehouse warehouse;
+    final private OrdersQueue orders;
+    final private int bakeTime;
+    AtomicBoolean isFree;
+    final private Pizzeria pizzeria;
 
+    public Baker(Pizzeria pizzeria, int exp) {
+        this.warehouse = pizzeria.warehouse;
+        this.orders = pizzeria.orders;
+        bakeTime = 15000/exp;
+        this.isFree = new AtomicBoolean(true);
+        this.pizzeria = pizzeria;
+    }
 
-public class Baker extends Employee implements Client<Order>, Producer<Order> {
-    private static final int MAX_COOKING_TIME = 5000;
-    private final int workingExperience;
-    private final Random random;
-    private final MyBlockingDequeue<Order> queue;
-    private final MyBlockingDequeue<Order> storage;
-
-
-    public Baker(int id, int workingExperience, MyBlockingDequeue<Order> queue, MyBlockingDequeue<Order> storage) {
-        super(id);
-        this.workingExperience = workingExperience;
-        this.random = new Random();
-        this.queue = queue;
-        this.storage = storage;
+    public boolean isFree() {
+        return isFree.get();
     }
 
     @Override
-    public Order consume() {
+    public void run() {
         try {
-            Order order = queue.get();
-            order.setState(COOKING);
-            return order;
-        } catch (InterruptedException exception) {
-            System.err.println("The baker №" + getId() + " could not take the order.");
-            return null;
+            if (pizzeria.isOpened()) {
+                isFree.set(false);
+                int orderNumber = orders.get_order();
+                if (orderNumber != -1) {
+                    System.out.println("[order " + orderNumber + "] [cooking]");
+                    Thread.sleep(bakeTime);
+                    warehouse.storeOrder(orderNumber);
+                    isFree.set(true);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-
-    @Override
-    public void produce(Order order) {
-        int leadTime = random.nextInt(MAX_COOKING_TIME);
-        try {
-            Thread.sleep(leadTime);
-            order.setState(IN_STOCK);
-            storage.put(order);
-        } catch (NullPointerException exception) {
-            System.err.println("The baker №" + getId() + " tried to fulfill an order that does not exist.");
-        } catch (InterruptedException exception) {
-            System.err.println("The baker №" + getId() + "could not fulfill the order.");
-        }
-    }
-
-    @Override
-    public void work() {
-        Order order = consume();
-        if (order == null) {
-            stop();
-        }
-        produce(order);
     }
 }

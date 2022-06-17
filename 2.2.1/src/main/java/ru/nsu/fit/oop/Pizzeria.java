@@ -1,69 +1,118 @@
 package ru.nsu.fit.oop;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Pizzeria implements Runnable {
-    private boolean runPizzeria;
-    private List<Baker> bakers;
-    private List<Courier> couriers;
-    private final Customers customers;
-    private final MyBlockingDequeue<Order> queue;
-    private final MyBlockingDequeue<Order> storage;
+    public int couriersCapacity;
+    private int warehouseSize;
+    private int ordersLimit;
+    private int doneOrders;
+    private int ordersReceived;
+    private final AtomicBoolean opened;
+    public OrdersQueue orders;
+    public Warehouse warehouse;
+    List<Integer> bakersExp;
+    List<Integer> couriersSpeed;
 
-    private void setBakers(BakerJSON[] bakers) {
-        Stream<BakerJSON> bakerJSONStream = Arrays.stream(bakers);
-        this.bakers = bakerJSONStream
-                .map(bakerJSON -> new Baker(bakerJSON.id(), bakerJSON.workingExperience(), this.queue, this.storage))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
+    public Pizzeria(File pizzeriaSettings) {
 
-    private void setCouriers(CourierJSON[] couriers) {
-        Stream<CourierJSON> courierJSONStream = Arrays.stream(couriers);
-        this.couriers = courierJSONStream
-                .map(courierJSON -> new Courier(courierJSON.id(), courierJSON.bagCapacity(), this.storage))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-
-    public Pizzeria(PizzeriaJSON settings) {
-        this.runPizzeria = false;
-        this.queue = new MyBlockingDequeue<>(settings.queueSize());
-        this.storage = new MyBlockingDequeue<>(settings.storageSize());
-        this.customers = new Customers(this.queue);
-        setBakers(settings.bakers());
-        setCouriers(settings.couriers());
-    }
-
-
-    @Override
-    public void run() {
-        runPizzeria = true;
-        ExecutorService bakersThreadPool = Executors.newFixedThreadPool(bakers.size());
-        ExecutorService couriersThreadPool = Executors.newFixedThreadPool(couriers.size());
-        bakers.forEach(bakersThreadPool::execute);
-        couriers.forEach(couriersThreadPool::execute);
-        Thread customersThread = new Thread(customers);
-        customersThread.start();
-        System.out.println("The pizzeria is up and running!");
-        while (runPizzeria && !bakersThreadPool.isTerminated() && !couriersThreadPool.isTerminated()) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        try {
+            PizzeriaParameters params = mapper.readValue(pizzeriaSettings, PizzeriaParameters.class);
+            this.warehouseSize = params.getStorageLimit();
+            this.ordersLimit = params.getOrdersLimit();
+            this.couriersCapacity = params.getCouriersCapacity();
+            this.bakersExp = params.getBakersExp();
+            this.couriersSpeed = params.getCouriersSpeed();
+            this.doneOrders = 0;
+            this.ordersReceived = 0;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        if (bakersThreadPool.isTerminated() || couriersThreadPool.isTerminated()) {
-            System.out.println("Oops, something went wrong. The pizzeria is closed for a technical break.");
-        }
-        runPizzeria = false;
-        bakersThreadPool.shutdownNow();
-        couriersThreadPool.shutdownNow();
-        customers.stop();
+        this.orders = new OrdersQueue(ordersLimit);
+        this.warehouse = new Warehouse(warehouseSize);
+        this.opened = new AtomicBoolean(true);
     }
 
-    public void stop() {
-        System.out.println("The pizzeria is closed. Come visit us tomorrow!");
-        runPizzeria = false;
+    public boolean isOpened () {
+        return opened.get();
+    }
+
+    public void newOrder() throws InterruptedException {
+        orders.new_order();
+        ordersReceived ++;
+    }
+
+    public boolean canReceiveOrder() {
+        return !(ordersLimit == ordersReceived);
+    }
+
+    public void increaseDoneOrders() {
+        doneOrders++;
+    }
+
+    public int getBakersCount() {
+        return bakersExp.size();
+    }
+
+    public int getCouriersCount(){
+        return couriersSpeed.size();
+    }
+
+    public int getWorkersCount() {
+        return bakersExp.size() + couriersSpeed.size();
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void run () {
+        opened.set(true);
+        System.out.println("=======\nPizzeria is opened\n=======");
+    }
+    public void close () {
+        if (ordersLimit == doneOrders && isOpened()) {
+            System.out.println("=======\nPizzeria is closed\n=======");
+            opened.set(false);
+        }
+    }
+
+
+    static class PizzeriaParameters {
+        private int[] bakersExp;
+        private int[] couriersSpeed;
+        private int couriersCapacity;
+        private int storageLimit;
+        private int ordersLimit;
+
+        public int getOrdersLimit() {
+            return ordersLimit;
+        }
+
+        public int getStorageLimit() {
+            return storageLimit;
+        }
+
+        public List<Integer> getBakersExp() {
+            return Arrays.stream(bakersExp).boxed().collect(Collectors.toList());
+        }
+
+        public List<Integer> getCouriersSpeed() {
+            return Arrays.stream(couriersSpeed).boxed().collect(Collectors.toList());
+        }
+
+        public int getCouriersCapacity() {
+            return couriersCapacity;
+        }
     }
 }
