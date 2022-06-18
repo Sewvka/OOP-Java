@@ -2,25 +2,25 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
-    id 'org.beryx.jlink' version '2.24.1'
 }
 
 group 'org.example'
 version '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
-
+mainClassName = 'ru.nsu.fit.oop.SnakeGame'
 javafx {
     version = '17.0.1'
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
 dependencies {
+    implementation 'org.netbeans.api:org-openide-awt:RELEASE130'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
+
 
 test {
     useJUnitPlatform()
