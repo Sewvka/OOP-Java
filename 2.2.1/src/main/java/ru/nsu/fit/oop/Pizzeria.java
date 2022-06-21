@@ -52,6 +52,14 @@ public class Pizzeria implements Runnable {
         ordersReceived ++;
     }
 
+    public int getOrdersReceived() {
+        return ordersReceived;
+    }
+
+    public int getDoneOrders() {
+        return doneOrders;
+    }
+
     public boolean canReceiveOrder() {
         return !(ordersLimit == ordersReceived);
     }
