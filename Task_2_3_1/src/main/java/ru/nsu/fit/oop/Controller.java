@@ -1,4 +1,8 @@
 /* (C) 2022 */
 package ru.nsu.fit.oop;
 
-public class Controller {}
+import javafx.scene.text.Text;
+
+public class Controller {
+  public Text score_cnt;
+}

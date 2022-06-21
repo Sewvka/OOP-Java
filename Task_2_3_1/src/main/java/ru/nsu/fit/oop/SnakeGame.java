@@ -14,6 +14,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -27,6 +28,8 @@ public class SnakeGame extends Application {
   private static final int LEFT = 1;
   private static final int UP = 2;
   private static final int DOWN = 3;
+  public Text score_cnt;
+  private int SHAPE;
   private static Snake snake;
   private GraphicsContext gc;
   private List<Food> foodList;
@@ -37,7 +40,7 @@ public class SnakeGame extends Application {
   public static void main(String[] args) {
     launch(args);
   }
-
+  // TODO move to fxml создание объектов объяснить зачем так лучше
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Snake");
@@ -152,24 +155,36 @@ public class SnakeGame extends Application {
           SQUARE_SIZE);
     }
   }
-
+  // TODO изменить вид змейки в зависимости от параметра
   private void drawSnake(GraphicsContext gc) {
+    SHAPE = 1;
+    int arc;
+    switch (SHAPE) {
+      case 1:
+        arc = 20;
+        break;
+      case 2:
+        arc = 35;
+        break;
+      default:
+        arc = 35;
+    }
     gc.setFill(Color.web("4674E9"));
     gc.fillRoundRect(
         Snake.getSnakeHead().getX() * SQUARE_SIZE,
         Snake.getSnakeHead().getY() * SQUARE_SIZE,
         SQUARE_SIZE - 1,
         SQUARE_SIZE - 1,
-        35,
-        35);
+        arc,
+        arc);
     for (int i = 1; i < Snake.getSnakeBody().size(); i++) {
       gc.fillRoundRect(
           Snake.getSnakeBody().get(i).getX() * SQUARE_SIZE,
           Snake.getSnakeBody().get(i).getY() * SQUARE_SIZE,
           SQUARE_SIZE - 1,
           SQUARE_SIZE - 1,
-          20,
-          20);
+          arc - 15,
+          arc - 15);
     }
   }
 

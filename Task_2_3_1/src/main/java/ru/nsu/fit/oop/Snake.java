@@ -75,7 +75,7 @@ public class Snake {
     }
     return false;
   }
-
+  // TODO Изменить написать спецификацию к Всем классам
   /** Check if snake cross food, then increase snake size, remove this food and create new one */
   public boolean eatFood(List<Food> foodList, int rows, int columns) {
     for (int food = 0; food < foodList.size(); food++) {
