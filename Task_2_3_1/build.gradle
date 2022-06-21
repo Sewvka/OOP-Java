@@ -2,9 +2,12 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
-}
+    id 'jacoco'
+    id "com.diffplug.spotless" version "6.7.2"
 
-group 'org.example'
+}
+//check google style JaCoCO add gavadoc gen
+group 'ru.nsu.fit.oop'
 version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
@@ -21,7 +24,26 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+        licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+
+    }
+}
+
+
+javadoc {
+    source = sourceSets.main.allJava
+}
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
