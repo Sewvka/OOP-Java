@@ -5,11 +5,22 @@ import java.awt.*;
 import java.util.List;
 import javafx.scene.image.Image;
 
+/**
+ * Food.java
+ *
+ * <p>Multiton class, which define food, which can be eaten by snake
+ */
 public class Food {
+  /** img of food */
   private Image img;
+
+  /** x coordinate of food */
   private int x;
+
+  /** y coordinate of food */
   private int y;
 
+  /** array of food images which can be shown on the screen */
   private static final String[] FOODS_IMAGE =
       new String[] {
         "/ru/nsu/fit/oop/images/ic_orange.png",

@@ -6,7 +6,6 @@ plugins {
     id "com.diffplug.spotless" version "6.7.2"
 
 }
-//check google style JaCoCO add gavadoc gen
 group 'ru.nsu.fit.oop'
 version '1.0-SNAPSHOT'
 repositories {

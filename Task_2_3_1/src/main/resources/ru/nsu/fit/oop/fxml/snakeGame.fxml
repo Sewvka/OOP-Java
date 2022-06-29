@@ -4,7 +4,6 @@
 <?import javafx.scene.text.*?>
 
 <GridPane alignment="center" hgap="10" prefHeight="14.0" prefWidth="27.0" vgap="10" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nsu.fit.oop.SnakeGame">
-   <children>
-      <Text id="score_cnt" fx:id="score_cnt" layoutX="10.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" x="10.0" y="35.0" />
-   </children>
+      <Text id="score_cnt" fx:id="score_cnt" styleClass="h2" text="Score"/>
+
 </GridPane>

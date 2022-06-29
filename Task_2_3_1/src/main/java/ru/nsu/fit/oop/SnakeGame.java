@@ -18,31 +18,72 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/** Class of whole game, which start it and defines all game stages, snake props and food list */
 public class SnakeGame extends Application {
+  /** width of game screen */
   private static final int WIDTH = 800;
+
+  /** height of game screen */
   private static final int HEIGHT = 800;
+
+  /** count of rows on screen */
   private static final int ROWS = 20;
+
+  /** count of columns on screen */
   private static final int COLUMNS = ROWS;
+
+  /** square size on screen */
   private static final int SQUARE_SIZE = WIDTH / ROWS;
+
+  /** direction of snake if it moves to right */
   private static final int RIGHT = 0;
+
+  /** direction of snake if it moves to left */
   private static final int LEFT = 1;
+
+  /** direction of snake if it moves up */
   private static final int UP = 2;
+
+  /** direction of snake if it moves down */
   private static final int DOWN = 3;
+
   public Text score_cnt;
+  /** defines shape of the snake */
   private int SHAPE;
+
+  /** snake in current game */
   private static Snake snake;
+
+  /** Graphics Context */
   private GraphicsContext gc;
+
+  /** List of food */
   private List<Food> foodList;
+
+  /** stage of the game if game is ended */
   private boolean gameOver;
+
+  /** define current direction of snake */
   private int currentDirection;
+
+  /** defines current score */
   private int score = 0;
 
+  /**
+   * @param args args from command line on start app
+   */
   public static void main(String[] args) {
     launch(args);
   }
-  // TODO move to fxml создание объектов объяснить зачем так лучше
+
+  /**
+   * Function that start game, create scene, generate food list and create snake
+   *
+   * @param primaryStage current stage of game
+   */
   @Override
   public void start(Stage primaryStage) {
+    SHAPE = 1;
     primaryStage.setTitle("Snake");
     Group root = new Group();
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
@@ -73,6 +114,8 @@ public class SnakeGame extends Application {
           } else if (code == KeyCode.SPACE) {
             if (gameOver) {
               restart();
+            } else {
+              SHAPE = SHAPE == 1 ? 2 : 1;
             }
           }
         });
@@ -83,6 +126,12 @@ public class SnakeGame extends Application {
     timeline.play();
   }
 
+  /**
+   * Draw all textures on screen and redraw it every 130 millisecond, also check snake current
+   * direction and move it, check game stage
+   *
+   * @param gc Graphics context used to issue draw calls to a Canvas using a buffer
+   */
   private void run(GraphicsContext gc) {
     if (gameOver) {
       gc.setFill(Color.RED);
@@ -110,7 +159,7 @@ public class SnakeGame extends Application {
         break;
     }
     gameOver();
-    if (snake.eatFood(foodList, ROWS, COLUMNS)) score += 5;
+    eatFood();
   }
 
   /** restart game if it's ended */
@@ -121,6 +170,11 @@ public class SnakeGame extends Application {
     gameOver = false;
   }
 
+  /**
+   * Draw background with tartan texture
+   *
+   * @param gc Graphics context
+   */
   private void drawBackground(GraphicsContext gc) {
     for (int i = 0; i < ROWS; i++) {
       for (int j = 0; j < COLUMNS; j++) {
@@ -135,7 +189,9 @@ public class SnakeGame extends Application {
   }
 
   /**
-   * @param count - count of food Create new list of food and fill it if n-th food
+   * Create new list of food and fill it if n-th food
+   *
+   * @param count - count of food
    */
   public void generateAllFood(int count) {
     foodList = new ArrayList<>();
@@ -145,6 +201,21 @@ public class SnakeGame extends Application {
     }
   }
 
+  /** Check if snake eat food then remove food from food list and add new one, increase score */
+  private void eatFood() {
+    int food = snake.eatFood(foodList);
+    if (food > -1) {
+      foodList.remove(food);
+      foodList.add(Food.generateFood(ROWS, COLUMNS, Snake.getSnakeBody(), foodList));
+      score += 5;
+    }
+  }
+
+  /**
+   * Draw food from food list on game screen
+   *
+   * @param gc Graphics context
+   */
   private void drawFood(GraphicsContext gc) {
     for (Food value : foodList) {
       gc.drawImage(
@@ -155,21 +226,26 @@ public class SnakeGame extends Application {
           SQUARE_SIZE);
     }
   }
-  // TODO изменить вид змейки в зависимости от параметра
+
+  /**
+   * Draws a snake depending on shape
+   *
+   * @param gc Graphics context
+   */
   private void drawSnake(GraphicsContext gc) {
-    SHAPE = 1;
-    int arc;
+    int arc = 35;
+    Color color = Color.web("4674E9");
     switch (SHAPE) {
       case 1:
         arc = 20;
+        color = Color.web("CC00CC");
         break;
       case 2:
+        color = Color.web("4674E9");
         arc = 35;
         break;
-      default:
-        arc = 35;
     }
-    gc.setFill(Color.web("4674E9"));
+    gc.setFill(color);
     gc.fillRoundRect(
         Snake.getSnakeHead().getX() * SQUARE_SIZE,
         Snake.getSnakeHead().getY() * SQUARE_SIZE,
@@ -188,11 +264,17 @@ public class SnakeGame extends Application {
     }
   }
 
-  /** Check if snake die then change game state */
+  /** Check if snake die */
   public void gameOver() {
-    if (snake.die(SQUARE_SIZE, WIDTH, HEIGHT)) gameOver = true;
+    if (Snake.getSnakeHead().x < 0
+        || Snake.getSnakeHead().y < 0
+        || Snake.getSnakeHead().x * SQUARE_SIZE >= WIDTH
+        || Snake.getSnakeHead().y * SQUARE_SIZE >= HEIGHT) {
+      gameOver = true;
+    } else if (snake.die(SQUARE_SIZE, WIDTH, HEIGHT)) gameOver = true;
   }
 
+  /** draw score on game screen */
   private void drawScore() {
     gc.setFill(Color.WHITE);
     gc.setFont(new Font("Digital-7", 35));
