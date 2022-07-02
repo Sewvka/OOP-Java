@@ -2,14 +2,20 @@
 package ru.nsu.fit.oop;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.util.Pair;
 
 /**
  * Snake.java
  *
- * <p>Singleton class of snake, which define coords of snake body and its head, can check if snake
- * eat itself or food Class of snake with props <b>snakeBody</b>, <b>snakeHead</b>
+ * <p>Class of snake, which define coords of snake body and its head, can check if snake eat itself
+ * or food
+ *
+ * <p>If you have one instance of snake and you want to create new one - old instance will be
+ * deleted and snake will be recreated, you can use it to restart your game Class of snake with
+ * props <b>snakeBody</b>, <b>snakeHead</b>
  */
 public class Snake {
   /** List of Points [(x,y), ...] coords of snake body */
@@ -54,32 +60,29 @@ public class Snake {
   }
 
   /** move snake to the right */
-  public void moveRight() {
+  public static void moveRight() {
     snakeHead.x++;
   }
 
   /** move snake to the left */
-  public void moveLeft() {
+  public static void moveLeft() {
     snakeHead.x--;
   }
 
   /** move snake to top */
-  public void moveUp() {
+  public static void moveUp() {
     snakeHead.y--;
   }
 
   /** move snake down */
-  public void moveDown() {
+  public static void moveDown() {
     snakeHead.y++;
   }
 
   /**
-   * @param square_size - size of one tile
-   * @param width - game screen width
-   * @param height - game screen height
    * @return - Boolean that means snake death
    */
-  public boolean die(int square_size, int width, int height) {
+  public static boolean die() {
 
     // destroy itself
     for (int i = 1; i < snakeBody.size(); i++) {
@@ -95,10 +98,10 @@ public class Snake {
    * @param foodList list of food
    * @return index of food in list if snake hit it else -1
    */
-  public int eatFood(List<Food> foodList) {
+  public static int eatFood(List<Pair<Food, File>> foodList) {
     for (int food = 0; food < foodList.size(); food++) {
-      if (snakeHead.getX() == foodList.get(food).getX()
-          && snakeHead.getY() == foodList.get(food).getY()) {
+      if (snakeHead.getX() == foodList.get(food).getKey().getX()
+          && snakeHead.getY() == foodList.get(food).getKey().getY()) {
         snakeBody.add(new Point(-1, -1));
         return food;
       }

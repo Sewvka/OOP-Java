@@ -1,8 +1,8 @@
 /* (C) 2022 */
 package ru.nsu.fit.oop;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -11,14 +11,16 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
-/** Class of whole game, which start it and defines all game stages, snake props and food list */
+/** Class of whole game, which start it and defines all game stages */
 public class SnakeGame extends Application {
   /** width of game screen */
   private static final int WIDTH = 800;
@@ -26,14 +28,8 @@ public class SnakeGame extends Application {
   /** height of game screen */
   private static final int HEIGHT = 800;
 
-  /** count of rows on screen */
-  private static final int ROWS = 20;
-
-  /** count of columns on screen */
-  private static final int COLUMNS = ROWS;
-
   /** square size on screen */
-  private static final int SQUARE_SIZE = WIDTH / ROWS;
+  private static int SQUARE_SIZE;
 
   /** direction of snake if it moves to right */
   private static final int RIGHT = 0;
@@ -52,22 +48,13 @@ public class SnakeGame extends Application {
   private int SHAPE;
 
   /** snake in current game */
-  private static Snake snake;
+  public static Snake snake;
 
   /** Graphics Context */
   private GraphicsContext gc;
 
-  /** List of food */
-  private List<Food> foodList;
-
-  /** stage of the game if game is ended */
-  private boolean gameOver;
-
   /** define current direction of snake */
   private int currentDirection;
-
-  /** defines current score */
-  private int score = 0;
 
   /**
    * @param args args from command line on start app
@@ -82,8 +69,10 @@ public class SnakeGame extends Application {
    * @param primaryStage current stage of game
    */
   @Override
-  public void start(Stage primaryStage) {
+  public void start(Stage primaryStage) throws IOException {
+    //    fxml вызыв, что мы можем опис что нет
     SHAPE = 1;
+    GameController.onGameStart(5);
     primaryStage.setTitle("Snake");
     Group root = new Group();
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
@@ -112,15 +101,15 @@ public class SnakeGame extends Application {
               currentDirection = DOWN;
             }
           } else if (code == KeyCode.SPACE) {
-            if (gameOver) {
-              restart();
+            if (GameController.getGameOver()) {
+              GameController.restart();
             } else {
               SHAPE = SHAPE == 1 ? 2 : 1;
             }
           }
         });
-    snake = new Snake(ROWS);
-    generateAllFood(5);
+    SQUARE_SIZE = HEIGHT / Field.getRows();
+    snake = new Snake(Field.getRows());
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(130), e -> run(gc)));
     timeline.setCycleCount(Animation.INDEFINITE);
     timeline.play();
@@ -133,7 +122,7 @@ public class SnakeGame extends Application {
    * @param gc Graphics context used to issue draw calls to a Canvas using a buffer
    */
   private void run(GraphicsContext gc) {
-    if (gameOver) {
+    if (GameController.getGameOver()) {
       gc.setFill(Color.RED);
       gc.setFont(new Font("Digital-7", 70));
       gc.fillText("Game Over", (float) WIDTH / 3.5, (float) HEIGHT / 2);
@@ -143,71 +132,44 @@ public class SnakeGame extends Application {
     drawFood(gc);
     drawSnake(gc);
     drawScore();
+    Field.changeTilesTaken(Snake.getSnakeBody());
     Snake.move();
     switch (currentDirection) {
       case RIGHT:
-        snake.moveRight();
+        Snake.moveRight();
         break;
       case LEFT:
-        snake.moveLeft();
+        Snake.moveLeft();
         break;
       case UP:
-        snake.moveUp();
+        Snake.moveUp();
         break;
       case DOWN:
-        snake.moveDown();
+        Snake.moveDown();
         break;
     }
-    gameOver();
-    eatFood();
-  }
-
-  /** restart game if it's ended */
-  private void restart() {
-    snake = new Snake(ROWS);
-    generateAllFood(5);
-    score = 0;
-    gameOver = false;
+    GameController.onGameRun();
   }
 
   /**
-   * Draw background with tartan texture
+   * Draw background with tartan texture or walls
    *
    * @param gc Graphics context
    */
   private void drawBackground(GraphicsContext gc) {
-    for (int i = 0; i < ROWS; i++) {
-      for (int j = 0; j < COLUMNS; j++) {
-        if ((i + j) % 2 == 0) {
-          gc.setFill(Color.web("AAD751"));
+    for (int i = 0; i < Field.getColumns(); i++) {
+      for (int j = 0; j < Field.getRows(); j++) {
+        if (!Field.getTile(i, j).isWall()) {
+          if ((i + j) % 2 == 0) {
+            gc.setFill(Color.web("AAD751"));
+          } else {
+            gc.setFill(Color.web("A2D149"));
+          }
         } else {
-          gc.setFill(Color.web("A2D149"));
+          gc.setFill(Color.web("A9A9A9"));
         }
         gc.fillRect(i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
       }
-    }
-  }
-
-  /**
-   * Create new list of food and fill it if n-th food
-   *
-   * @param count - count of food
-   */
-  public void generateAllFood(int count) {
-    foodList = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      Food food = Food.generateFood(ROWS, COLUMNS, Snake.getSnakeBody(), foodList);
-      foodList.add(food);
-    }
-  }
-
-  /** Check if snake eat food then remove food from food list and add new one, increase score */
-  private void eatFood() {
-    int food = snake.eatFood(foodList);
-    if (food > -1) {
-      foodList.remove(food);
-      foodList.add(Food.generateFood(ROWS, COLUMNS, Snake.getSnakeBody(), foodList));
-      score += 5;
     }
   }
 
@@ -217,11 +179,11 @@ public class SnakeGame extends Application {
    * @param gc Graphics context
    */
   private void drawFood(GraphicsContext gc) {
-    for (Food value : foodList) {
+    for (Pair<Food, File> value : GameController.getFoodList()) {
       gc.drawImage(
-          value.getImg(),
-          value.getX() * SQUARE_SIZE,
-          value.getY() * SQUARE_SIZE,
+          new Image("ru/nsu/fit/oop/images/" + value.getValue().getName()),
+          value.getKey().getX() * SQUARE_SIZE,
+          value.getKey().getY() * SQUARE_SIZE,
           SQUARE_SIZE,
           SQUARE_SIZE);
     }
@@ -264,20 +226,29 @@ public class SnakeGame extends Application {
     }
   }
 
-  /** Check if snake die */
-  public void gameOver() {
-    if (Snake.getSnakeHead().x < 0
-        || Snake.getSnakeHead().y < 0
-        || Snake.getSnakeHead().x * SQUARE_SIZE >= WIDTH
-        || Snake.getSnakeHead().y * SQUARE_SIZE >= HEIGHT) {
-      gameOver = true;
-    } else if (snake.die(SQUARE_SIZE, WIDTH, HEIGHT)) gameOver = true;
-  }
-
   /** draw score on game screen */
   private void drawScore() {
     gc.setFill(Color.WHITE);
     gc.setFont(new Font("Digital-7", 35));
-    gc.fillText("Score: " + score, 10, 35);
+    gc.fillText("Score: " + GameController.getScore(), 10, 35);
+  }
+
+  /**
+   * @return width of screen
+   */
+  public static int getWidth() {
+    return WIDTH;
+  }
+  /**
+   * @return height of screen
+   */
+  public static int getHeight() {
+    return HEIGHT;
+  }
+  /**
+   * @return square size
+   */
+  public static int getSquareSize() {
+    return SQUARE_SIZE;
   }
 }
