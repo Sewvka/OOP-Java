@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.Pair;
 
-public class GameController extends View implements Initializable {
+public class GameController implements Initializable {
   /** List of food */
   private static List<Pair<Food, File>> foodList;
   /** defines current score */
