@@ -2,19 +2,27 @@
 package ru.nsu.fit.oop;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
+import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.util.Pair;
 
-public class GameController {
+public class GameController extends View implements Initializable {
   /** List of food */
   private static List<Pair<Food, File>> foodList;
   /** defines current score */
   private static int score = 0;
   /** stage of the game if game is ended */
   private static boolean gameOver;
+
+  @FXML public Label scoreLabel;
 
   /**
    * This method should be used on game start to create game field and generate food
@@ -30,7 +38,7 @@ public class GameController {
   /**
    * This method should be used while game run to check gameOver and which food was eaten by snake
    */
-  public static void onGameRun() {
+  public void onGameRun() {
     gameOver();
     eatFood();
   }
@@ -104,7 +112,7 @@ public class GameController {
   /**
    * @return score of game
    */
-  public static int getScore() {
+  private static int getScore() {
     return score;
   }
 
@@ -121,5 +129,10 @@ public class GameController {
    */
   public static boolean getGameOver() {
     return gameOver;
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    scoreLabel.textProperty().bind(Bindings.format("Score: %d", getScore()));
   }
 }

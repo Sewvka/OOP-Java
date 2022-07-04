@@ -25,12 +25,14 @@ public class Food {
     Tile[] tilesList = Field.getTilesList();
     int cur;
     while (true) {
-      cur = (int) Math.floor(Math.random() * (tilesList.length + 1));
-      if (!(Field.getTile(tilesList[cur].getX(), tilesList[cur].getY()).isWall()
-          || Field.getTile(tilesList[cur].getX(), tilesList[cur].getY()).isTaken())) {
-        food.x = tilesList[cur].getX();
-        food.y = tilesList[cur].getY();
-        return food;
+      cur = (int) Math.floor(Math.random() * (tilesList.length));
+      if (!(tilesList[cur] == null)) {
+        if (!(Field.getTile(tilesList[cur].getX(), tilesList[cur].getY()).isWall()
+            || Field.getTile(tilesList[cur].getX(), tilesList[cur].getY()).isTaken())) {
+          food.x = tilesList[cur].getX();
+          food.y = tilesList[cur].getY();
+          return food;
+        }
       }
     }
   }

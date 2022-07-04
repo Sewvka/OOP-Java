@@ -7,7 +7,9 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -43,7 +44,6 @@ public class SnakeGame extends Application {
   /** direction of snake if it moves down */
   private static final int DOWN = 3;
 
-  public Text score_cnt;
   /** defines shape of the snake */
   private int SHAPE;
 
@@ -55,6 +55,8 @@ public class SnakeGame extends Application {
 
   /** define current direction of snake */
   private int currentDirection;
+
+  GameController gameController = new GameController();
 
   /**
    * @param args args from command line on start app
@@ -75,8 +77,10 @@ public class SnakeGame extends Application {
     GameController.onGameStart(5);
     primaryStage.setTitle("Snake");
     Group root = new Group();
+    Parent fx = FXMLLoader.load(getClass().getResource("fxml/snakeGame.fxml"));
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
     root.getChildren().add(canvas);
+    root.getChildren().add(fx);
     Scene scene = new Scene(root);
     primaryStage.setScene(scene);
     primaryStage.show();
@@ -110,6 +114,8 @@ public class SnakeGame extends Application {
         });
     SQUARE_SIZE = HEIGHT / Field.getRows();
     snake = new Snake(Field.getRows());
+    //    scoreLabel.textProperty().bind(Bindings.format("%d seconds left",
+    // GameController.getScore()));
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(130), e -> run(gc)));
     timeline.setCycleCount(Animation.INDEFINITE);
     timeline.play();
@@ -148,7 +154,7 @@ public class SnakeGame extends Application {
         Snake.moveDown();
         break;
     }
-    GameController.onGameRun();
+    gameController.onGameRun();
   }
 
   /**
@@ -190,7 +196,7 @@ public class SnakeGame extends Application {
   }
 
   /**
-   * Draws a snake depending on shape
+   * Draws a snake depending on shape = new Label("Score"+ GameController.getScore());
    *
    * @param gc Graphics context
    */
@@ -228,9 +234,10 @@ public class SnakeGame extends Application {
 
   /** draw score on game screen */
   private void drawScore() {
-    gc.setFill(Color.WHITE);
-    gc.setFont(new Font("Digital-7", 35));
-    gc.fillText("Score: " + GameController.getScore(), 10, 35);
+    //    gc.setFill(Color.WHITE);
+    //    gc.setFont(new Font("Digital-7", 35));
+    //    gc.fillText("Score: " + GameController.getScore(), 10, 35);
+    //    scoreLabel.setText("Score: "+ GameController.getScore());
   }
 
   /**

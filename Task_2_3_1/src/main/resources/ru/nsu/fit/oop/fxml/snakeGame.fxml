@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane alignment="center" hgap="10" prefHeight="14.0" prefWidth="27.0" vgap="10" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nsu.fit.oop.SnakeGame">
-      <Text id="score_cnt" fx:id="score_cnt" styleClass="h2" text="Score"/>
-
-</GridPane>
+<BorderPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.nsu.fit.oop.GameController">
+      <top>
+            <BorderPane maxHeight="50.0" minHeight="50.0" prefHeight="50.0" BorderPane.alignment="CENTER">
+                  <left>
+                        <HBox maxHeight="50.0" minHeight="50.0" prefHeight="50.0" BorderPane.alignment="CENTER">
+                              <Label fx:id="scoreLabel" styleClass="h2" maxHeight="50.0" minHeight="13.0" prefHeight="50.0"
+                                     text="Score"/>
+                        </HBox>
+                  </left>
+            </BorderPane>
+      </top>
+</BorderPane>

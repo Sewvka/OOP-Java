@@ -1,0 +1,6 @@
+.h2 {
+    -fx-font-family: "Fira Code Medium";
+    -fx-font-size: 35px;
+    -fx-text-fill: white;
+    -fx-start-margin: 50px;
+}
