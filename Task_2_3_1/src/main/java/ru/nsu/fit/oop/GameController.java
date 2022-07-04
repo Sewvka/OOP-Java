@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.util.Pair;
 
+/** Class, which responsible for the entire logic of the game*/
 public class GameController implements Initializable {
   /** List of food */
   private static List<Pair<Food, File>> foodList;

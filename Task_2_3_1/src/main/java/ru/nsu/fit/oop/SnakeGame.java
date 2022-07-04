@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
-/** Class of whole game, which start it and defines all game stages */
+/** Class of whole game, which start it and defines all game stage, draw game screen and games stuff on it */
 public class SnakeGame extends Application {
   /** width of game screen */
   private static final int WIDTH = 800;
